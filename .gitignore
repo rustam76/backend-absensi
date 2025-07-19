@@ -1,0 +1,47 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go build artifacts
+/build/
+/bin/
+/dist/
+
+# Vendor directory (if you're not committing dependencies)
+/vendor/
+
+# Go module cache
+.gocache/
+*.mod
+*.sum
+
+# Dependency directories (remove the comment if you use Go modules)
+go.sum
+
+# IDE/editor settings
+# VS Code
+.vscode/
+
+# JetBrains IDEs (GoLand)
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Swagger generated files (if applicable)
+docs/swagger/*
+
+# Local environment files
+.env
+.env.*

@@ -1,0 +1,568 @@
+basePath: /api
+definitions:
+  dto.AttendanceLogResponse:
+    properties:
+      attendance_id:
+        type: string
+      clock_in:
+        type: string
+      clock_out:
+        type: string
+      date_attendance:
+        type: string
+      departement_name:
+        type: string
+      employee_name:
+        type: string
+      is_late:
+        type: string
+      is_leave_early:
+        type: string
+      max_clock_in_time:
+        type: string
+      max_clock_out_time:
+        type: string
+      status_clock_in:
+        type: string
+      status_clock_out:
+        type: string
+    type: object
+  dto.DepartmentRequest:
+    properties:
+      departement_name:
+        type: string
+      max_clock_in_time:
+        type: string
+      max_clock_out_time:
+        type: string
+    type: object
+  dto.DepartmentResponse:
+    properties:
+      departement_name:
+        type: string
+      id:
+        type: integer
+      max_clock_in_time:
+        type: string
+      max_clock_out_time:
+        type: string
+    type: object
+  dto.EmployeeRequest:
+    properties:
+      address:
+        example: Jl. Sudirman No. 1
+        type: string
+      departement_id:
+        example: 2
+        type: integer
+      employee_id:
+        example: EMP001
+        type: string
+      name:
+        example: John Doe
+        type: string
+    type: object
+  dto.EmployeeResponse:
+    properties:
+      address:
+        type: string
+      departement_id:
+        type: integer
+      departement_name:
+        type: string
+      employee_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.LoginResponseDTO:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIs...
+        type: string
+      user:
+        $ref: '#/definitions/dto.LoginUserInfoResponseDTO'
+    type: object
+  dto.LoginUserInfoResponseDTO:
+    properties:
+      address:
+        type: string
+      departement:
+        type: string
+      employee_id:
+        type: string
+      max_clock_in_time:
+        type: string
+      max_clock_out_time:
+        type: string
+      name:
+        type: string
+    type: object
+  model.Attendance:
+    properties:
+      attendance_id:
+        type: string
+      clock_in:
+        type: string
+      clock_out:
+        type: string
+      created_at:
+        type: string
+      employee:
+        $ref: '#/definitions/model.Employee'
+      employee_id:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  model.Departement:
+    properties:
+      departement_name:
+        type: string
+      id:
+        type: integer
+      max_clock_in_time:
+        type: string
+      max_clock_out_time:
+        type: string
+    type: object
+  model.Employee:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      departement_id:
+        type: integer
+      departements:
+        $ref: '#/definitions/model.Departement'
+      employee_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  utils.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:3030
+info:
+  contact: {}
+  description: REST API untuk sistem absensi
+  title: Absensi API
+  version: "1.0"
+paths:
+  /api/attendance/clock-in:
+    post:
+      consumes:
+      - application/json
+      description: Employee clock in
+      parameters:
+      - description: Attendance data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Attendance'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Attendance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Clock in attendance
+      tags:
+      - Attendance
+  /api/attendance/clock-out/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Employee clock out
+      parameters:
+      - description: Attendance ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Employee ID
+        in: body
+        name: data
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Attendance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Clock out attendance
+      tags:
+      - Attendance
+  /api/attendance/logs:
+    get:
+      consumes:
+      - application/json
+      description: Get attendance logs with filter
+      parameters:
+      - description: Start Date
+        in: query
+        name: start_date
+        type: string
+      - description: End Date
+        in: query
+        name: end_date
+        type: string
+      - description: Departement ID
+        in: query
+        name: departement_id
+        type: string
+      - description: Employee ID
+        in: query
+        name: employee_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AttendanceLogResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get attendance logs
+      tags:
+      - Attendance
+  /api/departement/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a department by ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Delete a department
+      tags:
+      - Department
+    get:
+      consumes:
+      - application/json
+      description: Get a specific department by ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get department by ID
+      tags:
+      - Department
+    put:
+      consumes:
+      - application/json
+      description: Update an existing department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated department
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Update a department
+      tags:
+      - Department
+  /api/departements:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all departments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DepartmentResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get all departments
+      tags:
+      - Department
+    post:
+      consumes:
+      - application/json
+      description: Create a new department based on request body
+      parameters:
+      - description: Department to create
+        in: body
+        name: departement
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Create a new department
+      tags:
+      - Department
+  /api/employee/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Employee payload
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Update an employee
+      tags:
+      - Employee
+  /employee:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.EmployeeResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get all employees
+      tags:
+      - Employee
+    post:
+      consumes:
+      - application/json
+      description: Add a new employee
+      parameters:
+      - description: Employee details
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Create new employee
+      tags:
+      - Employee
+  /employee/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Delete employee
+      tags:
+      - Employee
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get an employee by ID
+      tags:
+      - Employee
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Employee ID
+        in: path
+        name: employeeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Login user
+      tags:
+      - Auth
+swagger: "2.0"
