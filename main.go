@@ -3,6 +3,7 @@ package main
 import (
 	"backend-absensi/config"
 	"backend-absensi/routes"
+	"backend-absensi/seeder"
 	"fmt"
 	"log"
 	"os"
@@ -31,6 +32,10 @@ func main() {
 	// Connect to database
 	config.ConnectDB()
 
+	err = seeder.Seed(config.DB)
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Setup Fiber
 	app := fiber.New()
 
