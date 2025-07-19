@@ -35,10 +35,11 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/swagger/*", swagger.HandlerDefault)
+
 	// Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: "http://localhost:3000, https://frontend-absensi-omega.vercel.app",
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders: "Content-Type, Authorization",
 	}))
