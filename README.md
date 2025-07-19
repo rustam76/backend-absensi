@@ -51,7 +51,7 @@ A RESTful API for an attendance management system built with Golang, Fiber frame
 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/rustam76/backend-absensi.git
 cd backend-absensi
 ```
 
