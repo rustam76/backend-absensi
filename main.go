@@ -20,7 +20,7 @@ import (
 // @title Absensi API
 // @version 1.0
 // @description REST API untuk sistem absensi
-// @host localhost:3030
+// @host localhost:3060
 // @BasePath /api
 func main() {
 	// Load .env file
@@ -44,7 +44,7 @@ func main() {
 	// Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3030, https://frontend-absensi-omega.vercel.app",
+		AllowOrigins: "http://localhost:3060, https://frontend-absensi-omega.vercel.app",
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders: "Content-Type, Authorization",
 	}))
@@ -55,8 +55,9 @@ func main() {
 	// Start server
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "3030"
+		port = "3060"
 	}
 	log.Printf("🚀 Server running at http://localhost:%s", port)
 	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
 }
+
