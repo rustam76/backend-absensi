@@ -12,7 +12,7 @@ func Seed(db *gorm.DB) error {
 	departementMap := map[string]model.Departement{
 		"HRD":     {DepartementName: "HRD", MaxClockInTime: "09:00:00", MaxClockOutTime: "17:00:00"},
 		"IT":      {DepartementName: "IT", MaxClockInTime: "10:00:00", MaxClockOutTime: "18:00:00"},
-		"Finance": {DepartementName: "Finance", MaxClockInTime: "08:30:00", MaxClockOutTime: "16:30:00"},
+		"Admin": {DepartementName: "Finance", MaxClockInTime: "08:30:00", MaxClockOutTime: "16:30:00"},
 	}
 
 	for name, dept := range departementMap {
