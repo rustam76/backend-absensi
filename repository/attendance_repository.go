@@ -12,6 +12,7 @@ type AttendanceRepository interface {
 	Create(attendance model.Attendance) (model.Attendance, error)
 	Update(id string, attendance model.Attendance) (model.Attendance, error)
 	CreateHistory(history model.AttendanceHistory) (model.AttendanceHistory, error)
+	GetByEmployeeIDAndDate(employeeID string, start, end time.Time) (model.Attendance, error)
 	GetByAttendanceID(attendanceID string) (model.Attendance, error)
 	GetAttendanceLogs(start_date string, end_date string, departementID string, employeeID string) ([]AttendanceLogResponse, error)
 }
@@ -57,6 +58,13 @@ func (r *attendanceRepo) Create(attendance model.Attendance) (model.Attendance, 
 
 func (r *attendanceRepo) Update(id string, attendance model.Attendance) (model.Attendance, error) {
 	err := r.db.Save(&attendance).Error
+	return attendance, err
+}
+
+func (r *attendanceRepo) GetByEmployeeIDAndDate(employeeID string, start, end time.Time) (model.Attendance, error) {
+	var attendance model.Attendance
+	err := r.db.Where("employee_id = ? AND clock_in >= ? AND clock_in < ?", employeeID, start, end).
+		First(&attendance).Error
 	return attendance, err
 }
 

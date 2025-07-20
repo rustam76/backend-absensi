@@ -1,5 +1,21 @@
 basePath: /api
 definitions:
+  dto.AttendanceClockInOutRequest:
+    properties:
+      employee_id:
+        type: string
+    type: object
+  dto.AttendanceClockInOutResponse:
+    properties:
+      attendance_id:
+        type: string
+      clock_in:
+        type: string
+      clock_out:
+        type: string
+      employee_id:
+        type: string
+    type: object
   dto.AttendanceLogResponse:
     properties:
       attendance_id:
@@ -100,55 +116,6 @@ definitions:
       name:
         type: string
     type: object
-  model.Attendance:
-    properties:
-      attendance_id:
-        type: string
-      clock_in:
-        type: string
-      clock_out:
-        type: string
-      created_at:
-        type: string
-      employee:
-        $ref: '#/definitions/model.Employee'
-      employee_id:
-        type: string
-      id:
-        type: integer
-      updated_at:
-        type: string
-    type: object
-  model.Departement:
-    properties:
-      departement_name:
-        type: string
-      id:
-        type: integer
-      max_clock_in_time:
-        type: string
-      max_clock_out_time:
-        type: string
-    type: object
-  model.Employee:
-    properties:
-      address:
-        type: string
-      created_at:
-        type: string
-      departement_id:
-        type: integer
-      departements:
-        $ref: '#/definitions/model.Departement'
-      employee_id:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
   utils.ErrorResponse:
     properties:
       message:
@@ -172,14 +139,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.Attendance'
+          $ref: '#/definitions/dto.AttendanceClockInOutRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Attendance'
+            $ref: '#/definitions/dto.AttendanceClockInOutResponse'
         "400":
           description: Bad Request
           schema:
@@ -193,26 +160,24 @@ paths:
       - application/json
       description: Employee clock out
       parameters:
-      - description: Attendance ID
+      - description: 'Attendance ID Example: EMP0001-2023-01-01'
         in: path
         name: id
         required: true
         type: string
-      - description: Employee ID
+      - description: Attendance data
         in: body
         name: data
         required: true
         schema:
-          additionalProperties:
-            type: string
-          type: object
+          $ref: '#/definitions/dto.AttendanceClockInOutRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Attendance'
+            $ref: '#/definitions/dto.AttendanceClockInOutResponse'
         "400":
           description: Bad Request
           schema:

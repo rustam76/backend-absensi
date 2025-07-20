@@ -25,22 +25,34 @@ func NewAttendanceController(service service.AttendanceService) AttendanceContro
 // @Tags Attendance
 // @Accept json
 // @Produce json
-// @Param data body model.Attendance true "Attendance data"
-// @Success 201 {object} model.Attendance
+// @Param data body dto.AttendanceClockInOutRequest true "Attendance data"
+// @Success 201 {object} dto.AttendanceClockInOutResponse
 // @Failure 400 {object} utils.ErrorResponse
 // @Router /api/attendance/clock-in [post]
 func (c *AttendanceController) ClockIn(ctx *fiber.Ctx) error {
 	var req model.Attendance
 	if err := ctx.BodyParser(&req); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{Message: "Invalid body"})
+		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{
+			Message: "Invalid body",
+		})
 	}
 
 	created, err := c.service.ClockIn(req)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(utils.ErrorResponse{Message: "Failed to clock in"})
+		// Tampilkan error sebenarnya
+		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{
+			Message: err.Error(),
+		})
 	}
 
-	return ctx.Status(http.StatusCreated).JSON(created)
+	response := dto.AttendanceClockInOutResponse{
+		EmployeeID:   created.EmployeeID,
+		ClockIn:      created.ClockIn,
+		ClockOut:     created.ClockOut,
+		AttendanceID: created.AttendanceID,
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(response)
 }
 
 // ClockOut godoc
@@ -49,27 +61,40 @@ func (c *AttendanceController) ClockIn(ctx *fiber.Ctx) error {
 // @Tags Attendance
 // @Accept json
 // @Produce json
-// @Param id path string true "Attendance ID"
-// @Param data body map[string]string true "Employee ID"
-// @Success 200 {object} model.Attendance
+// @Param id path string true "Attendance ID Example: EMP0001-2023-01-01"
+// @Param data body dto.AttendanceClockInOutRequest true "Attendance data"
+// @Success 200 {object} dto.AttendanceClockInOutResponse
 // @Failure 400 {object} utils.ErrorResponse
 // @Failure 500 {object} utils.ErrorResponse
 // @Router /api/attendance/clock-out/{id} [put]
 func (c *AttendanceController) ClockOut(ctx *fiber.Ctx) error {
 	attendanceID := ctx.Params("id")
+
 	var body struct {
 		EmployeeID string `json:"employee_id"`
 	}
 	if err := ctx.BodyParser(&body); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{Message: "Invalid body"})
+		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{
+			Message: "Invalid body",
+		})
 	}
 
 	updated, err := c.service.ClockOut(attendanceID, body.EmployeeID)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(utils.ErrorResponse{Message: "Failed to clock out"})
+		// Tampilkan pesan error yang dikirim dari service
+		return ctx.Status(http.StatusBadRequest).JSON(utils.ErrorResponse{
+			Message: err.Error(),
+		})
 	}
 
-	return ctx.Status(http.StatusOK).JSON(updated)
+	response := dto.AttendanceClockInOutResponse{
+		EmployeeID:   updated.EmployeeID,
+		ClockIn:      updated.ClockIn,
+		ClockOut:     updated.ClockOut,
+		AttendanceID: updated.AttendanceID,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(response)
 }
 
 // GetAttendanceLog godoc

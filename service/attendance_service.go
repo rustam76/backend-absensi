@@ -23,6 +23,15 @@ func NewAttendanceService(repo repository.AttendanceRepository) AttendanceServic
 
 func (s *attendanceService) ClockIn(attendance model.Attendance) (model.Attendance, error) {
 	now := time.Now()
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	endOfDay := startOfDay.Add(24 * time.Hour)
+
+	// Cek apakah sudah absen hari ini
+	existing, err := s.repo.GetByEmployeeIDAndDate(attendance.EmployeeID, startOfDay, endOfDay)
+	if err == nil && existing.AttendanceID != "" {
+		return existing, fmt.Errorf("anda sudah melakukan absen hari ini")
+	}
+
 	attendance.ClockIn = now
 	attendance.AttendanceID = fmt.Sprintf("%s-%d", attendance.EmployeeID, now.Unix())
 	attendance.CreatedAt = now
@@ -40,23 +49,27 @@ func (s *attendanceService) ClockIn(attendance model.Attendance) (model.Attendan
 		DateAttendance: attendance.ClockIn,
 		AttendanceType: 1,
 		Description:    "Clock In",
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+		CreatedAt:      now,
+		UpdatedAt:      now,
 	}
 	_, _ = s.repo.CreateHistory(history)
 
 	return created, nil
 }
+
 func (s *attendanceService) ClockOut(attendanceID string, employeeID string) (model.Attendance, error) {
 	attendance, err := s.repo.GetByAttendanceID(attendanceID)
 	if err != nil {
-		return attendance, err
+		return attendance, fmt.Errorf("data absen tidak ditemukan, silakan clock in terlebih dahulu")
+	}
+
+	if attendance.ClockOut != nil {
+		return attendance, fmt.Errorf("anda sudah melakukan clock out hari ini")
 	}
 
 	now := time.Now()
 	attendance.ClockOut = &now
-
-	attendance.UpdatedAt = time.Now()
+	attendance.UpdatedAt = now
 
 	updated, err := s.repo.Update(attendanceID, attendance)
 	if err != nil {
@@ -69,8 +82,8 @@ func (s *attendanceService) ClockOut(attendanceID string, employeeID string) (mo
 		DateAttendance: now,
 		AttendanceType: 2,
 		Description:    "Clock Out",
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+		CreatedAt:      now,
+		UpdatedAt:      now,
 	}
 	_, _ = s.repo.CreateHistory(history)
 

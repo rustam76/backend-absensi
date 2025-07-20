@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Attendance"
+                            "$ref": "#/definitions/dto.AttendanceClockInOutRequest"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Attendance"
+                            "$ref": "#/definitions/dto.AttendanceClockInOutResponse"
                         }
                     },
                     "400": {
@@ -71,21 +71,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Attendance ID",
+                        "description": "Attendance ID Example: EMP0001-2023-01-01",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Employee ID",
+                        "description": "Attendance data",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.AttendanceClockInOutRequest"
                         }
                     }
                 ],
@@ -93,7 +90,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Attendance"
+                            "$ref": "#/definitions/dto.AttendanceClockInOutResponse"
                         }
                     },
                     "400": {
@@ -630,6 +627,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AttendanceClockInOutRequest": {
+            "type": "object",
+            "properties": {
+                "employee_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AttendanceClockInOutResponse": {
+            "type": "object",
+            "properties": {
+                "attendance_id": {
+                    "type": "string"
+                },
+                "clock_in": {
+                    "type": "string"
+                },
+                "clock_out": {
+                    "type": "string"
+                },
+                "employee_id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.AttendanceLogResponse": {
             "type": "object",
             "properties": {
@@ -777,81 +799,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Attendance": {
-            "type": "object",
-            "properties": {
-                "attendance_id": {
-                    "type": "string"
-                },
-                "clock_in": {
-                    "type": "string"
-                },
-                "clock_out": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "employee": {
-                    "$ref": "#/definitions/model.Employee"
-                },
-                "employee_id": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Departement": {
-            "type": "object",
-            "properties": {
-                "departement_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "max_clock_in_time": {
-                    "type": "string"
-                },
-                "max_clock_out_time": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Employee": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "departement_id": {
-                    "type": "integer"
-                },
-                "departements": {
-                    "$ref": "#/definitions/model.Departement"
-                },
-                "employee_id": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }

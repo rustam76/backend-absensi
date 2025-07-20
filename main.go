@@ -44,7 +44,7 @@ func main() {
 	// Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000, https://frontend-absensi-omega.vercel.app",
+		AllowOrigins: "http://localhost:3030, https://frontend-absensi-omega.vercel.app",
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders: "Content-Type, Authorization",
 	}))

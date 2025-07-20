@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type AttendanceLogResponse struct {
 	EmployeeName    string `json:"employee_name"`
 	DepartementName string `json:"departement_name"`
@@ -13,4 +15,15 @@ type AttendanceLogResponse struct {
 	StatusClockOut  string `json:"status_clock_out"`
 	IsLate          string `json:"is_late"`
 	IsLeaveEarly    string `json:"is_leave_early"`
+}
+
+type AttendanceClockInOutRequest struct {
+	EmployeeID string `json:"employee_id"`
+}
+
+type AttendanceClockInOutResponse struct {
+	EmployeeID   string     `json:"employee_id"`
+	AttendanceID string     `json:"attendance_id"`
+	ClockIn      time.Time  `json:"clock_in"`
+	ClockOut     *time.Time `json:"clock_out,omitempty"`
 }
